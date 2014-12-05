@@ -26,4 +26,8 @@ if [ ! -d "$task_dir" ]; then
 		#git branch --set-upstream-to=origin/"$branch" master
 		popd
 	}
+else
+	pushd "$task_dir"
+	git pull --ff-only
+	popd
 fi
