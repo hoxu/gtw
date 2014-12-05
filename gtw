@@ -28,6 +28,6 @@ if [ ! -d "$task_dir" ]; then
 	}
 else
 	pushd "$task_dir"
-	git pull --ff-only
+	git pull --quiet --ff-only
 	popd
 fi
