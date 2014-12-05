@@ -17,7 +17,6 @@ if [ ! -d "$task_dir" ]; then
 		git clone "$git_dir" "$task_dir"
 		pushd "$task_dir" >/dev/null
 		git reset --hard origin/"$branch"
-		git branch --set-upstream-to=origin/"$branch"
 		popd >/dev/null
 	else
 		msg "branch '$branch' does not exist either, creating both"
@@ -25,12 +24,11 @@ if [ ! -d "$task_dir" ]; then
 		# TODO initial commit?
 		pushd "$task_dir" >/dev/null
 		git remote add origin "$git_dir" # TODO use a relative path to allow moving parent repo?
-		#git branch --set-upstream-to=origin/"$branch" master
 		popd
 	fi
 else
 	pushd "$task_dir" >/dev/null
-	git pull --quiet --ff-only
+	git pull --quiet --ff-only origin "$branch"
 	popd >/dev/null
 fi
 
@@ -47,4 +45,4 @@ if ! git diff-index --cached --quiet HEAD; then
 	git commit --quiet -m "task $command"
 fi
 
-git push --quiet -u origin master:$branch
+git push --quiet origin master:$branch
