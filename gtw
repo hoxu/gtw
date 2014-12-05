@@ -1,0 +1,7 @@
+#!/bin/bash -e
+# Copyright (c) 2014 Heikki Hokkanen <hoxu at users.sf.net>
+# License: GPLv3
+
+git_dir=$(git rev-parse --git-dir)
+task_dir=$(git config --get gtw.repository || echo "$git_dir/task")
+branch=$(git config --get gtw.branch || echo tasks)
