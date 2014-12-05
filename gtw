@@ -41,7 +41,7 @@ GIT_COMMITTER_NAME="gtw" \
 GIT_COMMITTER_EMAIL="gtw@localhost" \
 
 # if index has changes, commit them
-if ! git diff-index --cached --quiet HEAD; then
+if ! git rev-parse HEAD &>/dev/null || ! git diff-index --cached --quiet HEAD --; then
 	git commit --quiet -m "task $command"
 fi
 
