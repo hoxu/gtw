@@ -31,3 +31,14 @@ else
 	git pull --quiet --ff-only
 	popd
 fi
+
+command="$*"
+
+pushd "$task_dir"
+TASKDATA="$task_dir" task $*
+git add --all .
+GIT_COMMITTER_NAME="gtw" \
+GIT_COMMITTER_EMAIL="gtw@localhost" \
+git commit --quiet -m "task $command"
+
+git push --quiet -u origin master:$branch
