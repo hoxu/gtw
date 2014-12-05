@@ -41,6 +41,10 @@ TASKDATA="$task_dir" task $*
 git add --all .
 GIT_COMMITTER_NAME="gtw" \
 GIT_COMMITTER_EMAIL="gtw@localhost" \
-git commit --quiet -m "task $command"
+
+# if index has changes, commit them
+if ! git diff-index --cached --quiet HEAD; then
+	git commit --quiet -m "task $command"
+fi
 
 git push --quiet -u origin master:$branch
