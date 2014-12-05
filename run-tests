@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+tmpdir=$(mktemp -d)
+gtw=$(readlink -f ./gtw)
+
+function setUpMainRepo() {
+	pushd "$tmpdir"
+	mkdir repo
+	cd repo
+
+	git init
+	git commit --allow-empty -m 'Empty repository.'
+}
+
+function testFreshRepo() {
+	setUpMainRepo > /dev/null
+
+	$gtw add test task
+	$gtw add second task
+
+	assertEquals "Wrong number of commits in tasks branch" 2 $(git rev-list tasks |wc -l)
+
+	assertEquals "Main repository tasks sha1 matches taskwarrior repository sha1" $(cat .git/refs/heads/tasks) $(cat .git/task/.git/refs/heads/master)
+}
+
+. $(which shunit2)
+
+rm -rf "$tmpdir"
+
