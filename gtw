@@ -21,20 +21,20 @@ if [ ! -d "$task_dir" ]; then
 		msg "branch '$branch' does not exist either, creating both"
 		git init "$task_dir"
 		# TODO initial commit?
-		pushd "$task_dir"
+		pushd "$task_dir" >/dev/null
 		git remote add origin "$git_dir" # TODO use a relative path to allow moving parent repo?
 		#git branch --set-upstream-to=origin/"$branch" master
 		popd
 	}
 else
-	pushd "$task_dir"
+	pushd "$task_dir" >/dev/null
 	git pull --quiet --ff-only
-	popd
+	popd >/dev/null
 fi
 
 command="$*"
 
-pushd "$task_dir"
+pushd "$task_dir" >/dev/null
 TASKDATA="$task_dir" task $*
 git add --all .
 GIT_COMMITTER_NAME="gtw" \
