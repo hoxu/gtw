@@ -12,12 +12,12 @@ function msg() {
 
 if [ ! -d "$task_dir" ]; then
 	msg "taskwarrior repository not set up yet in $task_dir"
-	git show-ref --verify --quiet refs/heads/"$branch" && {
+	if git show-ref --verify --quiet refs/heads/"$branch"; then
 		msg "branch '$branch' exists in main repository, cloning"
 		git clone "$git_dir" "$task_dir"
 		git reset --hard origin/"$branch"
-		git branch --set-upstream-to=origin/"$branch" master
-	} || {
+		git branch --set-upstream-to=origin/"$branch"
+	else
 		msg "branch '$branch' does not exist either, creating both"
 		git init "$task_dir"
 		# TODO initial commit?
@@ -25,7 +25,7 @@ if [ ! -d "$task_dir" ]; then
 		git remote add origin "$git_dir" # TODO use a relative path to allow moving parent repo?
 		#git branch --set-upstream-to=origin/"$branch" master
 		popd
-	}
+	fi
 else
 	pushd "$task_dir" >/dev/null
 	git pull --quiet --ff-only
