@@ -15,8 +15,10 @@ if [ ! -d "$task_dir" ]; then
 	if git show-ref --verify --quiet refs/heads/"$branch"; then
 		msg "branch '$branch' exists in main repository, cloning"
 		git clone "$git_dir" "$task_dir"
+		pushd "$task_dir" >/dev/null
 		git reset --hard origin/"$branch"
 		git branch --set-upstream-to=origin/"$branch"
+		popd >/dev/null
 	else
 		msg "branch '$branch' does not exist either, creating both"
 		git init "$task_dir"
