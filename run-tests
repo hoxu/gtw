@@ -73,4 +73,17 @@ function testRepoWithOriginTasksBranch() {
 	assertEquals "Remote branch tasks should be ancestor of main tasks branch" $(cat .git/refs/remotes/origin/tasks) $(git merge-base tasks origin/tasks)
 }
 
+function testCustomSettings() {
+	git config gtw.repository "$tmpdir/repo/tasks"
+	git config gtw.branch "taskwarrior"
+
+	$gtw add test task
+
+	[ -d "$tmpdir/repo/tasks" ] || fail "custom repository path must exist"
+	[ ! -d ".git/task" ] || fail "regular taskwarrior path must not exist"
+	git show-ref --verify --quiet refs/heads/taskwarrior || fail "local taskwarrior branch must exist"
+
+	assertEquals "Main repository taskwarrior sha1 matches taskwarrior repository sha1" $(cat .git/refs/heads/taskwarrior) $(cat tasks/.git/refs/heads/master)
+}
+
 . $(which shunit2)
