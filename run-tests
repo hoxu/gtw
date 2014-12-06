@@ -53,6 +53,24 @@ function testRepoWithTasksBranch() {
 	commonAsserts
 }
 
+function testRepoWithOriginTasksBranch() {
+	$gtw add test task
+
+	git init --bare fakeremote
+	git remote add origin ./fakeremote
+	git push origin --all
+	git fetch origin
+	git branch -D tasks
+	rm -rf .git/task/
+
+	git show-ref --verify --quiet refs/heads/tasks && fail "local tasks branch must not exist"
+	git show-ref --verify --quiet refs/remotes/origin/tasks || fail "remote tasks branch must exist"
+
+	$gtw long # no modification, just report
+
+	commonAsserts
+
+	assertEquals "Remote branch tasks should be ancestor of main tasks branch" $(cat .git/refs/remotes/origin/tasks) $(git merge-base tasks origin/tasks)
+}
+
 . $(which shunit2)
-
-
