@@ -35,7 +35,9 @@ fi
 command="$*"
 
 pushd "$task_dir" >/dev/null
+set +e
 TASKDATA="$task_dir" task $*
+set -e
 git add --all .
 GIT_COMMITTER_NAME="gtw" \
 GIT_COMMITTER_EMAIL="gtw@localhost" \
