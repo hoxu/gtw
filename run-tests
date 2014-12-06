@@ -1,12 +1,20 @@
 #!/bin/bash
 set -e
 
-tmpdir=$(mktemp -d)
 gtw=$(readlink -f ./gtw)
 
-function setUpMainRepo() {
+function oneTimeSetUp() {
+	tmpdir=$(mktemp -d)
+}
+
+function oneTimeTearDown() {
+	if [ -n "$tmpdir" ]; then
+		rm -rf "$tmpdir"
+	fi
+}
+
+function setUp() {
 	pushd "$tmpdir"
-	rm -rf repo
 	mkdir repo
 	cd repo
 
@@ -14,13 +22,16 @@ function setUpMainRepo() {
 	git commit --allow-empty -m 'Empty repository.'
 }
 
+function tearDown() {
+	popd
+	rm -rf "$tmpdir/repo"
+}
+
 function commonAsserts() {
 	assertEquals "Main repository tasks sha1 matches taskwarrior repository sha1" $(cat .git/refs/heads/tasks) $(cat .git/task/.git/refs/heads/master)
 }
 
 function testFreshRepo() {
-	setUpMainRepo > /dev/null
-
 	$gtw add test task
 	$gtw add second task
 
@@ -29,8 +40,6 @@ function testFreshRepo() {
 }
 
 function testRepoWithTasksBranch() {
-	setUpMainRepo > /dev/null
-
 	$gtw add test task
 
 	rm -rf .git/task/
@@ -46,5 +55,4 @@ function testRepoWithTasksBranch() {
 
 . $(which shunit2)
 
-rm -rf "$tmpdir"
 
